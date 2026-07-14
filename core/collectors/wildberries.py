@@ -2,9 +2,10 @@
 
 Wildberries exposes an unauthenticated JSON search API — the same public surface
 that market-research tools rely on. It is also the hard part of the product: WB
-aggressively rate-limits datacenter IPs (HTTP 429). This collector therefore
-ships with polite rate limiting, exponential backoff on 429, and optional proxy
-support. Run it from a residential / RU network, or set `WB_PROXY_URL`.
+aggressively rate-limits by IP (HTTP 429), datacenter IPs worst of all. This
+collector therefore ships with polite rate limiting, randomized exponential
+backoff on 429, and optional proxy support. Run it from a residential / RU
+network, or set `WB_PROXY_URL`.
 
 Smoke test:  python -m core.collectors.wildberries "чехол для iphone"
 """
@@ -15,7 +16,7 @@ import asyncio
 import sys
 
 import httpx
-from tenacity import retry, retry_if_exception, stop_after_attempt, wait_exponential
+from tenacity import retry, retry_if_exception, stop_after_attempt, wait_random_exponential
 
 from core.collectors.base import MarketplaceCollector
 from core.config import get_settings
@@ -92,8 +93,8 @@ class WildberriesCollector(MarketplaceCollector):
 
     @retry(
         retry=retry_if_exception(_is_rate_limited),
-        wait=wait_exponential(multiplier=1, min=2, max=30),
-        stop=stop_after_attempt(5),
+        wait=wait_random_exponential(multiplier=1, max=40),
+        stop=stop_after_attempt(6),
         reraise=True,
     )
     async def _get(self, url: str, params: dict | None = None) -> dict:
@@ -155,8 +156,8 @@ async def _demo(query: str) -> None:
         products = await wb.search(query, limit=10)
     print(f"'{query}': {len(products)} products\n")
     for p in products:
-        price = f"{p.price:,.0f} RUB" if p.price else "—"
-        print(f"  {price:>12}  *{p.rating or '-'} ({p.reviews or 0:>5})  {p.brand or ''} — {p.name[:55]}")
+        price = f"{p.price:,.0f} RUB" if p.price else "-"
+        print(f"  {price:>12}  *{p.rating or '-'} ({p.reviews or 0:>5})  {p.brand or ''} - {p.name[:55]}")
 
 
 if __name__ == "__main__":
