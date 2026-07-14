@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Env / secrets
+.env
+.env.*
+!.env.example
+
+# Data / models (never commit scraped data or model artifacts)
+data/
+*.sqlite3
+*.db
+*.parquet
+*.csv
+models/
+
+# Node / frontend
+node_modules/
+dist/
+.next/
+build/
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
