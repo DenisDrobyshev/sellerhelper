@@ -14,13 +14,18 @@ env/
 .env.*
 !.env.example
 
-# Data / models (never commit scraped data or model artifacts)
+# Data / trained-model artifacts (never commit scraped data or model binaries)
+# NB: anchored to repo root so it never swallows the core/models source package
 data/
+/models/
 *.sqlite3
 *.db
 *.parquet
 *.csv
-models/
+*.pkl
+*.pt
+*.onnx
+*.joblib
 
 # Node / frontend
 node_modules/
