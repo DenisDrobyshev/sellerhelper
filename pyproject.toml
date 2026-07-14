@@ -27,10 +27,11 @@ target-version = "py312"
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
+pythonpath = ["."]
 
 [build-system]
 requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
-[tool.setuptools.packages.find]
-include = ["core*"]
+[tool.setuptools]
+packages = ["core", "core.api", "core.collectors", "core.engine", "core.models"]
