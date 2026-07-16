@@ -4,11 +4,34 @@ import httpx
 from fastapi import APIRouter, Query
 
 from core.collectors.wildberries import WildberriesCollector
+from core.engine.competition import evaluate_competition
 from core.engine.demand import validate_demand
 from core.engine.discover import discover_from_products
 from core.storage.repo import latest_snapshot
 
 router = APIRouter(prefix="/stages", tags=["stages"])
+
+
+@router.get("/competition")
+def competition(query: str = Query(..., min_length=2)) -> dict:
+    """Stage 3 — size up competition from the latest stored snapshot."""
+    products = latest_snapshot(query)
+    if not products:
+        return {
+            "stage": "competition",
+            "query": query,
+            "passed": False,
+            "note": f'no stored snapshot - crawl first: python -m core.collectors.wb_selenium "{query}"',
+        }
+    result = evaluate_competition(query, products)
+    return {
+        "stage": result.stage.value,
+        "query": query,
+        "passed": result.passed,
+        "score": result.score,
+        "reasons": result.reasons,
+        "evidence": result.evidence,
+    }
 
 
 @router.get("/discover")

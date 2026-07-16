@@ -93,7 +93,7 @@ Python · FastAPI · SQLAlchemy (SQLite / Postgres) · httpx · Selenium · Dock
 
 ## Status
 
-🚧 **Early development.** In: the project skeleton, two Wildberries collectors (httpx + a Selenium browser spider that beats IP throttling), snapshot storage, **Stage 1 — Discover** (mines candidate niches from real listings), and **Stage 2 — Validate demand** (with a trend gate). Next: Stages 3–5 (competition, unit economics, decide). See the [ROADMAP.md](ROADMAP.md).
+🚧 **Early development.** In: the project skeleton, two Wildberries collectors (httpx + a Selenium browser spider that beats IP throttling), snapshot storage, **Stage 1 — Discover** (mines candidate niches from real listings), **Stage 2 — Validate demand** (with a trend gate), and **Stage 3 — Competition** (brand concentration, price bands, entry-window gate). Next: Stages 4–5 (unit economics, decide). See the [ROADMAP.md](ROADMAP.md).
 
 ## Docs
 

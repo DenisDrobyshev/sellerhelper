@@ -11,7 +11,7 @@ The whole 5-stage pipeline for **Wildberries only**, self-hostable locally.
 - [x] Historization: timestamped snapshots in SQLite/Postgres (enables demand trend)
 - [x] Stage 1 — Discover (candidate niches) — `GET /stages/discover`
 - [x] Stage 2 — Validate demand (+ gate) — `GET /stages/demand`
-- [ ] Stage 3 — Competition + review-NLP unmet-needs mining (+ gate)
+- [x] Stage 3 — Competition: brand concentration + price bands + rating soft-spots (+ gate); review-NLP engine built, awaiting a review feed
 - [ ] Stage 4 — Unit economics (+ gate)
 - [ ] Stage 5 — Decide: Go/Pivot/Kill verdict + first-batch plan + launch checklist
 - [ ] One-command Docker Compose self-host
