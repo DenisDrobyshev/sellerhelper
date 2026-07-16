@@ -66,6 +66,9 @@ python -m core.collectors.wildberries "чехол для iphone"
 # Collect real data with the browser spider (beats IP throttling) + store a snapshot
 python -m core.collectors.wb_selenium "чехол для iphone"
 
+# Stage 1 — mine candidate niches from a stored snapshot
+python -m core.engine.discover --db "чехол для iphone"
+
 # Validate demand from stored snapshots (trend appears once you have >= 2)
 python -m core.engine.demand --db "чехол для iphone"
 ```
@@ -90,7 +93,7 @@ Python · FastAPI · SQLAlchemy (SQLite / Postgres) · httpx · Selenium · Dock
 
 ## Status
 
-🚧 **Early development.** In: the project skeleton, two Wildberries collectors (httpx + a Selenium browser spider that beats IP throttling), snapshot storage, and **Stage 2 — Validate demand** (live or from stored snapshots, with a trend gate). Next: Stage 1 (Discover) and the remaining gates. See the [ROADMAP.md](ROADMAP.md).
+🚧 **Early development.** In: the project skeleton, two Wildberries collectors (httpx + a Selenium browser spider that beats IP throttling), snapshot storage, **Stage 1 — Discover** (mines candidate niches from real listings), and **Stage 2 — Validate demand** (with a trend gate). Next: Stages 3–5 (competition, unit economics, decide). See the [ROADMAP.md](ROADMAP.md).
 
 ## Docs
 

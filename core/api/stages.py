@@ -1,12 +1,42 @@
-"""Stage endpoints — run a pipeline stage over live marketplace data."""
+"""Stage endpoints — run a pipeline stage over marketplace data."""
 
 import httpx
 from fastapi import APIRouter, Query
 
 from core.collectors.wildberries import WildberriesCollector
 from core.engine.demand import validate_demand
+from core.engine.discover import discover_from_products
+from core.storage.repo import latest_snapshot
 
 router = APIRouter(prefix="/stages", tags=["stages"])
+
+
+@router.get("/discover")
+def discover(seed: str = Query(..., min_length=2), budget: float | None = None) -> dict:
+    """Stage 1 — mine candidate niches from the latest stored snapshot of the seed."""
+    products = latest_snapshot(seed)
+    if not products:
+        return {
+            "stage": "discover",
+            "seed": seed,
+            "candidates": [],
+            "note": f'no stored snapshot - crawl first: '
+                    f'python -m core.collectors.wb_selenium "{seed}"',
+        }
+    niches = discover_from_products(seed, products, budget=budget)
+    return {
+        "stage": "discover",
+        "seed": seed,
+        "candidates": [
+            {
+                "query": n.query,
+                "products": n.products,
+                "price_median": n.price_median,
+                "total_reviews": n.total_reviews,
+            }
+            for n in niches
+        ],
+    }
 
 
 @router.get("/demand")
