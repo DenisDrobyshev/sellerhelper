@@ -51,6 +51,28 @@ def _extract_price(raw: dict) -> tuple[float | None, float | None]:
     return _kopecks(raw.get("salePriceU")), _kopecks(raw.get("priceU"))
 
 
+def normalize_wb(raw: dict) -> Product:
+    """Map a raw WB search product dict to the normalized ``Product`` model.
+
+    Shared by the httpx collector and the Selenium spider so both stay in sync.
+    """
+    price, base_price = _extract_price(raw)
+    ext_id = raw.get("id")
+    return Product(
+        marketplace="wildberries",
+        external_id=ext_id,
+        root_id=raw.get("root"),
+        name=raw.get("name", ""),
+        brand=raw.get("brand"),
+        seller=raw.get("supplier"),
+        price=price,
+        base_price=base_price,
+        rating=raw.get("reviewRating") or raw.get("rating"),
+        reviews=raw.get("feedbacks"),
+        url=f"https://www.wildberries.ru/catalog/{ext_id}/detail.aspx" if ext_id else None,
+    )
+
+
 class WildberriesCollector(MarketplaceCollector):
     marketplace = "wildberries"
 
@@ -134,21 +156,7 @@ class WildberriesCollector(MarketplaceCollector):
         return []
 
     def _normalize(self, raw: dict) -> Product:
-        price, base_price = _extract_price(raw)
-        ext_id = raw.get("id")
-        return Product(
-            marketplace=self.marketplace,
-            external_id=ext_id,
-            root_id=raw.get("root"),
-            name=raw.get("name", ""),
-            brand=raw.get("brand"),
-            seller=raw.get("supplier"),
-            price=price,
-            base_price=base_price,
-            rating=raw.get("reviewRating") or raw.get("rating"),
-            reviews=raw.get("feedbacks"),
-            url=f"https://www.wildberries.ru/catalog/{ext_id}/detail.aspx" if ext_id else None,
-        )
+        return normalize_wb(raw)
 
 
 async def _demo(query: str) -> None:

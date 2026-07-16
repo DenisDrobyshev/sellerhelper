@@ -7,8 +7,8 @@ The strategy is **start narrow, prove the engine, then widen**. One marketplace,
 The whole 5-stage pipeline for **Wildberries only**, self-hostable locally.
 
 - [ ] Onboarding: budget, interests, goal
-- [x] Wildberries data connector (public catalog, search, prices, reviews)
-- [ ] Historization / snapshots (enables demand trend)
+- [x] Wildberries data connector — httpx API + Selenium browser spider (beats IP throttling)
+- [x] Historization: timestamped snapshots in SQLite/Postgres (enables demand trend)
 - [ ] Stage 1 — Discover (candidate niches)
 - [x] Stage 2 — Validate demand (+ gate) — `GET /stages/demand`
 - [ ] Stage 3 — Competition + review-NLP unmet-needs mining (+ gate)

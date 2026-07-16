@@ -60,30 +60,37 @@ docker compose up --build     # -> http://localhost:8000/docs
 pip install -e ".[dev]"
 uvicorn core.main:app --reload
 
-# Smoke-test the Wildberries collector
+# Smoke-test the httpx collector (fast, but WB may throttle the IP)
 python -m core.collectors.wildberries "чехол для iphone"
+
+# Collect real data with the browser spider (beats IP throttling) + store a snapshot
+python -m core.collectors.wb_selenium "чехол для iphone"
+
+# Validate demand from stored snapshots (trend appears once you have >= 2)
+python -m core.engine.demand --db "чехол для iphone"
 ```
 
-> **Heads-up on data.** Wildberries rate-limits datacenter IPs with HTTP 429. Run the collector from a residential / RU network or set `WB_PROXY_URL`. This is the core hard problem of the product — the collector handles it with exponential backoff, polite throttling, and proxy support.
+> **Heads-up on data.** Wildberries rate-limits IPs with HTTP 429 — even a browser's direct API calls. The **Selenium spider** sidesteps this: it drives a real Chrome, opens the search page like a person, and reads the product cards the page renders, so data flows even when the raw API is blocked. The httpx collector remains for fast API access with backoff, throttling, and `WB_PROXY_URL` support.
 
 ## Project layout
 
 ```
 core/
   api/          FastAPI routes
-  collectors/   marketplace connectors (Wildberries)
-  engine/       stage-gate state machine
+  collectors/   Wildberries collectors — httpx API + Selenium browser spider
+  engine/       stage-gate engine (Stage 2: demand + trend)
   models/       normalized data models
+  storage/      snapshot persistence (SQLAlchemy)
 tests/          unit tests (CI: ruff + pytest)
 ```
 
 ## Tech
 
-Python · FastAPI · PostgreSQL · Redis · async collectors (httpx) · Docker Compose. Planned: LLM orchestration + RAG over market data, and ML — demand forecasting, niche scoring, review NLP. See [ARCHITECTURE.md](ARCHITECTURE.md).
+Python · FastAPI · SQLAlchemy (SQLite / Postgres) · httpx · Selenium · Docker Compose. Planned: LLM orchestration + RAG over market data, and ML — demand forecasting, niche scoring, review NLP. See [ARCHITECTURE.md](ARCHITECTURE.md).
 
 ## Status
 
-🚧 **Early development.** In: the project skeleton, the Wildberries collector, and **Stage 2 — Validate demand** (`GET /stages/demand`). Next: Stage 1 (Discover) and the remaining gates. See the [ROADMAP.md](ROADMAP.md).
+🚧 **Early development.** In: the project skeleton, two Wildberries collectors (httpx + a Selenium browser spider that beats IP throttling), snapshot storage, and **Stage 2 — Validate demand** (live or from stored snapshots, with a trend gate). Next: Stage 1 (Discover) and the remaining gates. See the [ROADMAP.md](ROADMAP.md).
 
 ## Docs
 

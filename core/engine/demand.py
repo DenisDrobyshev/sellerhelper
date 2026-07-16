@@ -2,16 +2,17 @@
 
 Turns a snapshot of the top marketplace products for a query into a demand
 verdict. The gate passes when there is proven buying activity (reviews across
-the top sellers) in a market that is not trivially thin.
+the top sellers) in a market that is not trivially thin, and demand is not
+declining across snapshots.
 
-Trend direction ("not declining") needs historized snapshots and lands with the
-cloud data layer (see ROADMAP). v0 evaluates the demand *level* from a single
-snapshot and is explicit that the trend is not yet assessed.
+Trend needs at least two historized snapshots; with a single snapshot the gate
+uses the demand *level* only and reports the trend as unknown.
 """
 
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass
+from datetime import datetime
 from math import log10
 
 from core.engine.stages import GateResult, Stage
@@ -20,6 +21,7 @@ from core.models.product import Product
 # Tunable gate thresholds — conservative defaults for a first pass.
 DEFAULT_MIN_PRODUCTS = 10
 DEFAULT_MIN_TOTAL_REVIEWS = 2000
+TREND_BAND = 0.05  # +/-5% between first and last snapshot counts as "flat"
 
 
 def _percentile(values: list[float], p: float) -> float | None:
@@ -72,12 +74,28 @@ def demand_score(m: DemandMetrics) -> float:
     return round(min(1.0, log10(m.total_reviews + 1) / 5), 2)
 
 
+def compute_trend(totals: list[tuple[datetime, int]]) -> str:
+    """Classify demand trend from (timestamp, total_reviews) snapshots, oldest first."""
+    if len(totals) < 2:
+        return "unknown"
+    first, last = totals[0][1], totals[-1][1]
+    if first <= 0:
+        return "unknown"
+    change = (last - first) / first
+    if change > TREND_BAND:
+        return "growing"
+    if change < -TREND_BAND:
+        return "declining"
+    return "flat"
+
+
 def validate_demand(
     query: str,
     products: list[Product],
     *,
     min_products: int = DEFAULT_MIN_PRODUCTS,
     min_total_reviews: int = DEFAULT_MIN_TOTAL_REVIEWS,
+    trend: str | None = None,
 ) -> GateResult:
     """Run the Stage 2 gate over a product snapshot and return a GateResult."""
     m = analyze_demand(query, products)
@@ -105,16 +123,23 @@ def validate_demand(
         reasons.append(
             f"price corridor ~ {m.price_p25}-{m.price_p75} RUB (median {m.price_median} RUB)"
         )
-    reasons.append(
-        "trend direction not evaluated in v0 - requires historized snapshots (roadmap)"
-    )
+
+    if trend == "declining":
+        passed = False
+        reasons.append("demand is declining across snapshots - fails the 'not declining' gate")
+    elif trend in ("growing", "flat"):
+        reasons.append(f"trend across snapshots: {trend}")
+    else:
+        reasons.append(
+            "trend not evaluated - needs >= 2 historized snapshots (run the spider over time)"
+        )
 
     return GateResult(
         stage=Stage.VALIDATE_DEMAND,
         passed=passed,
         score=demand_score(m),
         reasons=reasons,
-        evidence=asdict(m),
+        evidence={**asdict(m), "trend": trend or "unknown"},
     )
 
 
@@ -131,11 +156,30 @@ async def _demo(query: str) -> None:
         print(f"\nData source error for {query!r}: HTTP {code}.")
         if code == 429:
             print("Wildberries throttled the request - retry from a residential/RU IP, "
-                  "set WB_PROXY_URL, or wait for the limit to reset.")
+                  "set WB_PROXY_URL, or use the Selenium spider (core.collectors.wb_selenium).")
         return
     result = validate_demand(query, products)
+    _print_result(query, result, snapshots=1)
+
+
+def _demo_db(query: str) -> None:
+    from core.storage.repo import latest_snapshot, snapshot_totals_over_time
+
+    products = latest_snapshot(query)
+    if not products:
+        print(f"No stored snapshot for {query!r}. Collect one first:")
+        print(f'  python -m core.collectors.wb_selenium "{query}"')
+        return
+    totals = snapshot_totals_over_time(query)
+    result = validate_demand(query, products, trend=compute_trend(totals))
+    _print_result(query, result, snapshots=len(totals))
+
+
+def _print_result(query: str, result: GateResult, *, snapshots: int) -> None:
     print(f"\nStage 2 . Validate demand - {query!r}")
     print(f"  verdict: {'PASS' if result.passed else 'FAIL'}   demand score: {result.score}")
+    print(f"  based on {result.evidence.get('products_analyzed', 0)} products "
+          f"across {snapshots} snapshot(s)")
     for r in result.reasons:
         print(f"   - {r}")
 
@@ -144,4 +188,8 @@ if __name__ == "__main__":
     import asyncio
     import sys
 
-    asyncio.run(_demo(" ".join(sys.argv[1:]) or "чехол для iphone"))
+    argv = sys.argv[1:]
+    if argv and argv[0] == "--db":
+        _demo_db(" ".join(argv[1:]) or "чехол для iphone")
+    else:
+        asyncio.run(_demo(" ".join(argv) or "чехол для iphone"))
