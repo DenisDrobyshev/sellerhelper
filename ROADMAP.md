@@ -21,7 +21,7 @@ Completion criterion: ten beginning sellers run the pipeline end to end.
 
 ## v1. Hosted service and Ozon
 
-- [ ] Ozon connector, which tests whether the collector interface is genuinely marketplace-agnostic
+- [x] Ozon collector implementing the shared Product interface; the engine runs unchanged on Ozon products. Live Ozon collection is blocked by Ozon's anti-bot (headless Chrome receives a stub) and needs residential proxies or stealth
 - [ ] Hosted deployment serving pre-collected current and historical data
 - [ ] Accounts and a paid tier
 

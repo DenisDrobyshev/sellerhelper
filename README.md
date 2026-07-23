@@ -165,7 +165,7 @@ Stage 4 fee defaults are category-independent approximations of Wildberries comm
 
 The Selenium collector requires a local Chrome installation. Chrome intermittently fails to start on repeated launches within one session; rerunning the command resolves it.
 
-Only Wildberries is supported. Ozon and Amazon connectors are on the roadmap and are the intended test of whether the collector interface is genuinely marketplace-agnostic.
+The engine, storage and Product model are marketplace-agnostic, and an Ozon collector (`core/collectors/ozon.py`) implements the same interface; the pipeline runs unchanged on Ozon products. Live Ozon collection is blocked by Ozon's anti-bot, which serves a stub page to automated browsers, and would need residential proxies and stealth that are out of scope here. Amazon and Etsy remain on the roadmap.
 
 ## Testing
 
