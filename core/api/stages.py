@@ -8,10 +8,43 @@ from core.engine.competition import evaluate_competition
 from core.engine.decide import decide, to_gate_result
 from core.engine.demand import compute_trend, validate_demand
 from core.engine.discover import discover_from_products
+from core.engine.pipeline import run_pipeline
 from core.engine.unit_economics import evaluate_unit_economics
 from core.storage.repo import latest_snapshot, snapshot_totals_over_time
 
 router = APIRouter(prefix="/stages", tags=["stages"])
+
+
+@router.get("/pipeline")
+def pipeline(query: str = Query(..., min_length=2), budget: float | None = None) -> dict:
+    """Run all five stages over the latest stored snapshot and return the report."""
+    products = latest_snapshot(query)
+    if not products:
+        return {
+            "stage": "pipeline",
+            "query": query,
+            "note": f'no stored snapshot - crawl first: python -m core.collectors.wb_selenium "{query}"',
+        }
+    trend = compute_trend(snapshot_totals_over_time(query))
+    report = run_pipeline(query, products, budget=budget, trend=trend)
+    result = to_gate_result(report.decision)
+    return {
+        "query": query,
+        "verdict": result.evidence["verdict"],
+        "score": result.score,
+        "reasons": result.reasons,
+        "plan": report.decision.plan,
+        "checklist": report.decision.checklist,
+        "adjacent_niches": [
+            {
+                "query": c.query,
+                "products": c.products,
+                "price_median": c.price_median,
+                "total_reviews": c.total_reviews,
+            }
+            for c in report.candidates[:6]
+        ],
+    }
 
 
 @router.get("/competition")

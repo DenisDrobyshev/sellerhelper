@@ -67,10 +67,12 @@ Selenium-коллектор требует локально установлен
 
 ## Использование
 
-Сначала собрать снимок, затем запускать стадии по сохранённым данным:
+Сначала собрать снимок, затем запустить всю воронку или любую отдельную стадию по сохранённым данным:
 
 ```bash
 python -m core.collectors.wb_selenium "термокружка"             # обход и запись снимка
+python -m core.engine.pipeline       --db "термокружка" 100000   # все пять стадий разом
+
 python -m core.engine.discover       --db "термокружка"          # стадия 1
 python -m core.engine.demand         --db "термокружка"          # стадия 2
 python -m core.engine.competition    --db "термокружка"          # стадия 3
@@ -91,6 +93,17 @@ uvicorn core.main:app --reload      # http://localhost:8000/docs
 | `GET /stages/competition?query=` | 3 |
 | `GET /stages/economics?query=&price=&budget=&cogs=` | 4 |
 | `GET /stages/decide?query=&budget=` | 5 |
+| `GET /stages/pipeline?query=&budget=` | все пять |
+
+## Сбор по расписанию
+
+Зарегистрируйте запросы и обходите их по расписанию (cron или Планировщик заданий Windows). Каждый проход сохраняет снимок с меткой времени, что и даёт тренду стадии 2 реальный интервал для измерения.
+
+```bash
+python -m core.scheduler --add "термокружка"   # зарегистрировать запрос
+python -m core.scheduler --list                 # показать список наблюдения
+python -m core.scheduler                        # обойти все наблюдаемые запросы один раз
+```
 
 Файл Docker Compose поднимает API вместе с PostgreSQL и Redis:
 

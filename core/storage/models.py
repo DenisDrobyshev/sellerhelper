@@ -37,3 +37,13 @@ class ProductObservation(Base):
 
 
 Index("ix_obs_query_time", ProductObservation.query, ProductObservation.collected_at)
+
+
+class WatchQuery(Base):
+    """A query the collection scheduler crawls on each pass."""
+
+    __tablename__ = "watch_queries"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    query: Mapped[str] = mapped_column(String(256), unique=True)
+    added_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))

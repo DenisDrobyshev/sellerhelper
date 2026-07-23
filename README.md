@@ -67,10 +67,12 @@ The Selenium collector requires a local Chrome installation. Selenium Manager re
 
 ## Usage
 
-Collect a snapshot, then run stages against the stored data:
+Collect a snapshot, then run the whole pipeline or any single stage against the stored data:
 
 ```bash
 python -m core.collectors.wb_selenium "термокружка"             # crawl and store a snapshot
+python -m core.engine.pipeline       --db "термокружка" 100000   # all five stages at once
+
 python -m core.engine.discover       --db "термокружка"          # stage 1
 python -m core.engine.demand         --db "термокружка"          # stage 2
 python -m core.engine.competition    --db "термокружка"          # stage 3
@@ -91,6 +93,17 @@ uvicorn core.main:app --reload      # http://localhost:8000/docs
 | `GET /stages/competition?query=` | 3 |
 | `GET /stages/economics?query=&price=&budget=&cogs=` | 4 |
 | `GET /stages/decide?query=&budget=` | 5 |
+| `GET /stages/pipeline?query=&budget=` | all five |
+
+## Scheduled collection
+
+Register queries and crawl them on a schedule (cron, or Windows Task Scheduler). Each pass stores a timestamped snapshot, which is what gives the Stage 2 trend a real interval to measure over.
+
+```bash
+python -m core.scheduler --add "термокружка"   # register a query
+python -m core.scheduler --list                 # show the watchlist
+python -m core.scheduler                        # crawl every watched query once
+```
 
 A Docker Compose file starts the API with PostgreSQL and Redis:
 

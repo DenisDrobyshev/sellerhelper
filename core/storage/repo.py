@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 
 from core.models.product import Product
 from core.storage.db import get_engine
-from core.storage.models import ProductObservation
+from core.storage.models import ProductObservation, WatchQuery
 
 
 def save_snapshot(
@@ -97,3 +97,33 @@ def snapshot_totals_over_time(
             .order_by(ProductObservation.collected_at)
         ).all()
     return [(row[0], int(row[1])) for row in rows]
+
+
+def add_watch(query: str, *, engine: Engine | None = None) -> bool:
+    """Add a query to the collection watchlist. Returns False if already present."""
+    engine = engine or get_engine()
+    with Session(engine) as session:
+        if session.scalar(select(WatchQuery).where(WatchQuery.query == query)):
+            return False
+        session.add(WatchQuery(query=query, added_at=datetime.now(timezone.utc)))
+        session.commit()
+    return True
+
+
+def list_watch(*, engine: Engine | None = None) -> list[str]:
+    """Return the watched queries, sorted."""
+    engine = engine or get_engine()
+    with Session(engine) as session:
+        return list(session.scalars(select(WatchQuery.query).order_by(WatchQuery.query)))
+
+
+def remove_watch(query: str, *, engine: Engine | None = None) -> bool:
+    """Remove a query from the watchlist. Returns False if it was not present."""
+    engine = engine or get_engine()
+    with Session(engine) as session:
+        obj = session.scalar(select(WatchQuery).where(WatchQuery.query == query))
+        if obj is None:
+            return False
+        session.delete(obj)
+        session.commit()
+    return True
