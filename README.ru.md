@@ -114,6 +114,15 @@ uvicorn core.main:app --reload      # http://localhost:8000/docs
 uvicorn core.main:app --reload      # http://localhost:8000/
 ```
 
+![Веб-интерфейс SellerHelper](docs/web-ui-light.png)
+
+<details>
+<summary>Тот же интерфейс, тёмная тема</summary>
+
+![Веб-интерфейс SellerHelper, тёмная тема](docs/web-ui-dark.png)
+
+</details>
+
 ## Сбор по расписанию
 
 Зарегистрируйте запросы и обходите их по расписанию (cron или Планировщик заданий Windows). Каждый проход сохраняет снимок с меткой времени, что и даёт тренду стадии 2 реальный интервал для измерения.

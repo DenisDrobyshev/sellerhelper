@@ -114,6 +114,15 @@ The same process serves a single-page web interface at the root path. It takes a
 uvicorn core.main:app --reload      # http://localhost:8000/
 ```
 
+![SellerHelper web interface](docs/web-ui-light.png)
+
+<details>
+<summary>Same interface, dark theme</summary>
+
+![SellerHelper web interface in dark theme](docs/web-ui-dark.png)
+
+</details>
+
 ## Scheduled collection
 
 Register queries and crawl them on a schedule (cron, or Windows Task Scheduler). Each pass stores a timestamped snapshot, which is what gives the Stage 2 trend a real interval to measure over.
