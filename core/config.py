@@ -8,11 +8,11 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
-    app_name: str = "SellerCompass"
+    app_name: str = "SellerHelper"
 
     # Storage. Defaults to a local SQLite file (zero setup); point at Postgres by
     # setting DATABASE_URL to e.g. postgresql+psycopg://user:pass@host/db.
-    database_url: str = "sqlite:///sellercompass.db"
+    database_url: str = "sqlite:///sellerhelper.db"
     redis_url: str = "redis://localhost:6381/0"
 
     # LLM — bring your own key in the open-source build.

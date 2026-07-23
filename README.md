@@ -1,14 +1,14 @@
-# SellerCompass
+# SellerHelper
 
 An open-source decision pipeline for marketplace sellers. It takes a seed interest and returns a Go, Pivot, or Kill verdict on a product niche, computed from live Wildberries listing data rather than from a language model's priors.
 
-[![CI](https://github.com/DenisDrobyshev/sellercompass/actions/workflows/ci.yml/badge.svg)](https://github.com/DenisDrobyshev/sellercompass/actions/workflows/ci.yml)
+[![CI](https://github.com/DenisDrobyshev/sellerhelper/actions/workflows/ci.yml/badge.svg)](https://github.com/DenisDrobyshev/sellerhelper/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Python 3.12](https://img.shields.io/badge/python-3.12-blue.svg)](https://www.python.org/)
 
 English | [Русский](README.ru.md)
 
-The repository is mirrored at [GitLab](https://gitlab.com/DenisDrobyshev/sellercompass).
+The repository is mirrored at [GitLab](https://gitlab.com/DenisDrobyshev/sellerhelper).
 
 Status: v0, under development. All five pipeline stages run against live data. Wildberries is the only supported marketplace.
 
@@ -16,7 +16,7 @@ Status: v0, under development. All five pipeline stages run against live data. W
 
 Beginning sellers usually fail at product selection, before anything else is decided. Existing tools fall into two groups. Business plan generators produce narrative documents populated with invented figures. Analytics services such as MPStats, Moneyplace, Jungle Scout and Helium 10 provide accurate data but present it as a dashboard, which assumes the reader already knows which metrics matter and what threshold separates a viable niche from a bad one.
 
-SellerCompass encodes that judgment as a sequence of gates. Each stage computes metrics from collected listings and applies an explicit pass or fail condition. A stage that fails blocks the pipeline and reports the numbers behind the decision.
+SellerHelper encodes that judgment as a sequence of gates. Each stage computes metrics from collected listings and applies an explicit pass or fail condition. A stage that fails blocks the pipeline and reports the numbers behind the decision.
 
 ## Pipeline
 
@@ -57,8 +57,8 @@ Historical snapshots cannot be reconstructed retroactively, which is why collect
 ## Installation
 
 ```bash
-git clone https://github.com/DenisDrobyshev/sellercompass
-cd sellercompass
+git clone https://github.com/DenisDrobyshev/sellerhelper
+cd sellerhelper
 cp .env.example .env
 pip install -e ".[dev]"
 ```

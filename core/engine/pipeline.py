@@ -37,7 +37,7 @@ def run_pipeline(
 def _print(report: PipelineReport) -> None:
     decision = report.decision
     result = to_gate_result(decision)
-    print(f"\n=== SellerCompass pipeline: {report.query!r} ===")
+    print(f"\n=== SellerHelper pipeline: {report.query!r} ===")
     print(f"verdict: {result.evidence['verdict']}   (combined score {result.score})")
     for reason in result.reasons:
         print(f"   {reason}")

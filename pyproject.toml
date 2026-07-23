@@ -1,5 +1,5 @@
 [project]
-name = "sellercompass"
+name = "sellerhelper"
 version = "0.0.1"
 description = "Open-source AI co-founder for marketplace sellers"
 readme = "README.md"

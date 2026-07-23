@@ -6,8 +6,8 @@ services:
     environment:
       # Defaults to SQLite on a persistent volume, so the stack runs with no
       # configuration. To use the bundled Postgres, install psycopg and set:
-      # DATABASE_URL: postgresql+psycopg://sellercompass:sellercompass@db:5432/sellercompass
-      DATABASE_URL: sqlite:////data/sellercompass.db
+      # DATABASE_URL: postgresql+psycopg://sellerhelper:sellerhelper@db:5432/sellerhelper
+      DATABASE_URL: sqlite:////data/sellerhelper.db
     volumes:
       - apidata:/data
     depends_on: [db, redis]
@@ -20,9 +20,9 @@ services:
   db:
     image: postgres:16
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-sellercompass}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-sellercompass}
-      POSTGRES_DB: ${POSTGRES_DB:-sellercompass}
+      POSTGRES_USER: ${POSTGRES_USER:-sellerhelper}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-sellerhelper}
+      POSTGRES_DB: ${POSTGRES_DB:-sellerhelper}
     ports:
       - "5434:5432"   # host 5434 to avoid clashing with a local Postgres
     volumes:

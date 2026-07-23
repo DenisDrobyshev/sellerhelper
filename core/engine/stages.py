@@ -1,4 +1,4 @@
-"""The stage-gate engine — the backbone of SellerCompass.
+"""The stage-gate engine — the backbone of SellerHelper.
 
 The engine is a state machine: each stage runs on collected data and produces a
 ``GateResult``. A failed gate blocks progression (the caller routes the user to
