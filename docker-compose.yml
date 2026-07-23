@@ -3,11 +3,19 @@ services:
     build: .
     ports:
       - "8000:8000"
-    env_file: .env
-    depends_on: [db, redis]
-    command: uvicorn core.main:app --host 0.0.0.0 --port 8000 --reload
+    environment:
+      # Defaults to SQLite on a persistent volume, so the stack runs with no
+      # configuration. To use the bundled Postgres, install psycopg and set:
+      # DATABASE_URL: postgresql+psycopg://sellercompass:sellercompass@db:5432/sellercompass
+      DATABASE_URL: sqlite:////data/sellercompass.db
     volumes:
-      - ./core:/app/core
+      - apidata:/data
+    depends_on: [db, redis]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   db:
     image: postgres:16
@@ -16,7 +24,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-sellercompass}
       POSTGRES_DB: ${POSTGRES_DB:-sellercompass}
     ports:
-      - "5434:5432"   # host 5434 to avoid clashing with local Postgres / other projects
+      - "5434:5432"   # host 5434 to avoid clashing with a local Postgres
     volumes:
       - pgdata:/var/lib/postgresql/data
 
@@ -26,4 +34,5 @@ services:
       - "6381:6379"
 
 volumes:
+  apidata:
   pgdata:

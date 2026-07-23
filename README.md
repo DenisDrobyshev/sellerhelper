@@ -105,10 +105,10 @@ python -m core.scheduler --list                 # show the watchlist
 python -m core.scheduler                        # crawl every watched query once
 ```
 
-A Docker Compose file starts the API with PostgreSQL and Redis:
+`docker compose up --build` starts the API with no configuration required. It uses SQLite on a persistent volume by default and includes a health check; PostgreSQL and Redis start alongside for opt-in use.
 
 ```bash
-docker compose up --build
+docker compose up --build      # http://localhost:8000/health
 ```
 
 ## Example

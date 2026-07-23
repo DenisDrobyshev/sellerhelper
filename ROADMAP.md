@@ -15,7 +15,7 @@ The sequence is deliberate: one marketplace, one complete pipeline, real users, 
 - [x] Scheduled collection via a watchlist (`core.scheduler`), so trend classification has real separation in time
 - [x] Onboarding flow: a profile (budget, interests, goal) ranked into a recommendation (`core.engine.onboarding`, `GET /stages/recommend`)
 - [ ] Review feed for the complaint extraction in stage 3
-- [ ] Verified single-command Docker Compose deployment
+- [x] Docker Compose that runs with no configuration (SQLite volume, healthcheck, no `.env` required); compose config validated
 
 Completion criterion: ten beginning sellers run the pipeline end to end.
 

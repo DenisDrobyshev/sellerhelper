@@ -105,10 +105,10 @@ python -m core.scheduler --list                 # показать список 
 python -m core.scheduler                        # обойти все наблюдаемые запросы один раз
 ```
 
-Файл Docker Compose поднимает API вместе с PostgreSQL и Redis:
+`docker compose up --build` поднимает API без какой-либо настройки. По умолчанию используется SQLite на персистентном томе, есть health check; PostgreSQL и Redis запускаются рядом для опционального использования.
 
 ```bash
-docker compose up --build
+docker compose up --build      # http://localhost:8000/health
 ```
 
 ## Пример
