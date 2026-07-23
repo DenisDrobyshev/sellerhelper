@@ -20,7 +20,10 @@ dependencies = [
 dev = [
     "pytest>=8",
     "pytest-asyncio>=0.23",
-    "ruff>=0.5",
+    # Pinned so CI runs the exact linter the code was checked against; ruff's
+    # default rule set expands between releases, which otherwise turns a passing
+    # tree red on an unrelated push.
+    "ruff==0.15.21",
 ]
 llm = [
     "anthropic>=0.40",
@@ -29,6 +32,12 @@ llm = [
 [tool.ruff]
 line-length = 100
 target-version = "py312"
+
+[tool.ruff.lint]
+# State the rule set explicitly rather than inheriting ruff's defaults, which
+# change between releases. This is the historical default (pyflakes plus the
+# essential pycodestyle checks) and keeps linting reproducible across versions.
+select = ["E4", "E7", "E9", "F"]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
