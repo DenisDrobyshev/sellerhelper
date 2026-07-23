@@ -8,7 +8,7 @@
 
 [English](README.md) | Русский
 
-Репозиторий продублирован на [GitLab](https://gitlab.com/DenisDrobyshev/sellerhelper).
+Репозиторий также размещен на платформе [GitLab](https://gitlab.com/DenisDrobyshev/sellerhelper).
 
 Статус: версия v0, в разработке. Все пять стадий конвейера работают на живых данных. Поддерживается только Wildberries.
 
