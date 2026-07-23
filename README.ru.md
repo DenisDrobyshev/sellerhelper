@@ -1,6 +1,6 @@
 # SellerHelper
 
-Открытый конвейер принятия решений для продавцов маркетплейсов. По исходному интересу он возвращает вердикт Go, Pivot или Kill по товарной нише, вычисленный на живых данных выдачи Wildberries, а не на априорных представлениях языковой модели.
+Открытый конвейер принятия решений для продавцов маркетплейсов. По исходному интересу он возвращает вердикт Go, Pivot или Kill по товарной нише, вычисленный на реальных данных выдачи Wildberries, а не на априорных представлениях языковой модели.
 
 [![CI](https://github.com/DenisDrobyshev/sellerhelper/actions/workflows/ci.yml/badge.svg)](https://github.com/DenisDrobyshev/sellerhelper/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
